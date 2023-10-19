@@ -13,7 +13,7 @@ app.use(express.json())
 
 
 
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.stv3jdc.mongodb.net/?retryWrites=true&w=majority`;
 
 // console.log(uri)
@@ -44,12 +44,36 @@ async function run() {
     })
 
 
-    // app.get('/tech/:name',async(req,res)=>{
-    //     const id=req.params.id;
-    //     const query = {_id: new ObjectId(id)}
-    //     const result = await techCollection.findOne(query);
-    //     res.send(result)
-    // })
+    app.get('/tech/:id',async(req,res)=>{
+        const id=req.params.id;
+        const query = {_id: new ObjectId(id)}
+        const result = await techCollection.findOne(query);
+        res.send(result)
+    })
+
+    // update
+
+    app.put('/update/:id', async(req,res)=>{
+        const id=req.params.id;
+        const filter = {_id: new ObjectId(id)}
+        const options = { upsert: true };
+        const updateTech = req.body;
+        const tech = {
+            $set:{
+                image : updateTech.image,
+                name: updateTech.name,
+                brand : updateTech.brand,
+                type: updateTech.type,
+                price: updateTech.price,
+                rating: updateTech.rating,
+
+            }
+        }
+        const result = await techCollection.updateOne(filter,tech,options)
+        res.send(result)
+    })
+
+    
 
     // create
 
