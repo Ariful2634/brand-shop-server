@@ -34,6 +34,7 @@ async function run() {
     await client.connect();
 
     const techCollection = client.db("techDB").collection("tech")
+    const cartCollection = client.db("techDB").collection("cart")
 
     // read
 
@@ -82,6 +83,35 @@ async function run() {
         const result =  await techCollection.insertOne(addTech)
         res.send(result)
     })
+
+
+    // for cart
+
+    app.post('/cart', async(req,res)=>{
+        const details = req.body;
+        const result = await cartCollection.insertOne(details)
+        res.send(result)
+    })
+
+    // app.get('/cart', async(req,res)=>{
+    //     const cursor = cartCollection.find()
+    //     const result = await cursor.toArray()
+    //     res.send(result)
+    // })
+
+
+
+    // delete
+
+    app.delete('/cart/:id', async(req,res)=>{
+        const id = req.params.id;
+        const query = {_id: new ObjectId(id)}
+        const result = await cartCollection.deleteOne(query)
+        res.send(result)
+    })
+
+
+
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
